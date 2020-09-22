@@ -4,11 +4,13 @@ Created on Sep 21, 2020
 @author: vinhm
 '''
 
+
 class DoublyLinkedListNode:
     def __init__(self, node_data):
         self.data = node_data
         self.next = None
         self.prev = None
+
 
 class DoublyLinkedList:
     def __init__(self):
@@ -25,5 +27,3 @@ class DoublyLinkedList:
             node.prev = self.tail
 
         self.tail = node
-
-        

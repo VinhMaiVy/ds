@@ -4,34 +4,37 @@ Created on Sep 21, 2020
 @author: vinhm
 '''
 
-class BinarySearchTreeNode:
-    def __init__(self, info): 
-        self.info = info  
-        self.left = None  
-        self.right = None 
-        self.level = None 
+
+class BinarySearchTreeNode(object):
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+        self.level = None
 
     def __str__(self):
-        return str(self.info) 
+        return str(self.data)
 
-class BinarySearchTree:
-    def __init__(self): 
+
+class BinarySearchTree(object):
+
+    def __init__(self):
         self.root = None
 
-    def insert(self, val):  
-        if self.root == None:
+    def insert(self, val):
+        if not self.root:
             self.root = BinarySearchTreeNode(val)
         else:
             current = self.root
-         
+
             while True:
-                if val < current.info:
+                if val < current.data:
                     if current.left:
                         current = current.left
                     else:
                         current.left = BinarySearchTreeNode(val)
                         break
-                elif val > current.info:
+                elif val > current.data:
                     if current.right:
                         current = current.right
                     else:
@@ -39,3 +42,24 @@ class BinarySearchTree:
                         break
                 else:
                     break
+
+    def delete(self, val):
+        pass
+
+    def min(self):
+        if not self.root.left:
+            return self.root.data
+        else:
+            current = self.root
+            while current.left:
+                current = current.left
+            return current.data
+
+    def max(self):
+        if not self.root.right:
+            return self.root.data
+        else:
+            current = self.root
+            while current.right:
+                current = current.right
+            return current.data
