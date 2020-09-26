@@ -4,6 +4,7 @@ Created on Sep 21, 2020
 @author: vinhm
 '''
 
+
 class SinglyLinkedListNode:
     def __init__(self, node_data):
         self.data = node_data
@@ -24,4 +25,3 @@ class SinglyLinkedList:
             self.tail.next = node
 
         self.tail = node
-        
