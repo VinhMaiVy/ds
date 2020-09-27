@@ -5,21 +5,24 @@ Created on Sep 21, 2020
 '''
 
 
-class BinarySearchTreeNode(object):
+class BinarySearchTreeNode():
     def __init__(self, data):
         self.data = data
         self.left = None
         self.right = None
-        self.level = None
 
     def __str__(self):
         return str(self.data)
 
 
-class BinarySearchTree(object):
+class BinarySearchTree():
 
-    def __init__(self):
-        self.root = None
+    def __init__(self, BinarySearchTreeNode = None):
+        if BinarySearchTreeNode == None:
+            self.root = None
+        else:
+            self.root = BinarySearchTreeNode
+            # print(self.root.data)
 
     def insert(self, val):
         if not self.root:
@@ -50,16 +53,25 @@ class BinarySearchTree(object):
         if not self.root.left:
             return self.root.data
         else:
-            current = self.root
-            while current.left:
-                current = current.left
-            return current.data
+            return BinarySearchTree(self.root.left).min()            
+            #current = self.root
+            #while current.left:
+            #    current = current.left
+            #return current.data
 
     def max(self):
         if not self.root.right:
             return self.root.data
         else:
-            current = self.root
-            while current.right:
-                current = current.right
-            return current.data
+            return BinarySearchTree(self.root.right).max()
+            #current = self.root
+            #while current.right:
+            #    current = current.right
+            #return current.data
+
+    def sort(self):
+        if self.root:        
+            BinarySearchTree(self.root.left).sort()
+            print(self.root, end=" ")        
+            BinarySearchTree(self.root.right).sort()
+            

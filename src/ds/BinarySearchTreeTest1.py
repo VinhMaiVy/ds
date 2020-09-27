@@ -25,4 +25,5 @@ if __name__ == '__main__':
     print('tree root is:', tree.root)
     print('tree min is:', tree.min())
     print('tree max is:', tree.max())
-    tree.sort()
+    
+    tree.sort()    
