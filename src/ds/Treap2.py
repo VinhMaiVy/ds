@@ -14,7 +14,7 @@ class TreapNode(object):
 
     def __init__(self, data, priority):
         self.data = data
-        self.priority = priority        
+        self.priority = priority
         self.left = None
         self.right = None
 
@@ -28,11 +28,14 @@ class Treap(object):
     def __init__(self):
         self.root = None
 
-    def __str__(self):
-        res = str(self.root.left) if self.root.left else ''
-        res += str(self.root.data) + ' '
-        res += str(self.root.right) if self.root.right else ''
+    def _str(self, tp_node):
+        res = self._str(tp_node.left) if tp_node.left else ''
+        res += str(tp_node.data) + ' '
+        res += self._str(tp_node.right) if tp_node.right else ''
         return res
+
+    def __str__(self):
+        return self._str(self.root)
 
     def _find(self, tp_node, data):
         if tp_node is None:
@@ -73,7 +76,7 @@ class Treap(object):
         else:
             right.left = self.merge(left, right.left)
             return right
-    
+
     def insert(self, data):
         new_node = TreapNode(data, self.gen())
         if self.root is None:

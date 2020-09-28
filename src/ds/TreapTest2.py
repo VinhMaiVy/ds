@@ -31,26 +31,31 @@ Output:
 """
 
 
-from random import random
-from src.ds.Treap1 import Treap
+# from random import random
+from src.ds.Treap2 import Treap
 
 
 def handle(treap, c, i, j):
 
+    # print('handling', t.val, c, i, end)
+    i -= 1
+
     left, treap.root = treap.split(i)
-    # print('left: ', left)
+    print(str(left))
+    print(str(treap))
+
     treap.root, right = treap.split(j - i)
-    # print('right: ', right)
+    print(str(treap))
+    print(str(right))
+
     result = treap.merge(left, right)
-    # print('merge: ', result)
-    # print('cut: ', treap.root)
+    print(str(result))
 
     if c == 1:
         result = treap.merge(treap.root, result)
     elif c == 2:
         result = treap.merge(result, treap.root)
 
-    # print('result: ', result, '\n')
     return result
 
 
@@ -59,16 +64,18 @@ if __name__ == '__main__':
     n, m = map(int, input().split())
     a = list(map(int, input().split()))
 
-    treap = Treap(a[0], random())
-    for i in a[1:]:
-        treap = treap.merge(treap, Treap(i, random()))
+    treap = Treap()
+
+    for i in a:
+        treap.insert(i)
+    print(treap)
 
     queries = []
     for _ in range(m):
         queries.append(list(map(int, input().split())))
 
     for c, i, j in queries:
-        treap = handle(treap, c, i-1, j)
+        treap = handle(treap, c, i, j)
 
     print(abs(treap[1] - treap[n]))
-    print(treap)
+    print(str(treap))
