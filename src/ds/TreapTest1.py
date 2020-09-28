@@ -18,22 +18,23 @@ Output:
 """
 
 
-from random import random
-from ds.Treap import Treap
+# from random import random
+from src.ds.Treap2 import Treap
+
 
 def handle(treap, c, i, j):
 
     # print('handling', t.val, c, i, end)
     i -= 1
 
-    left, treap = treap.split(i)
-    treap, right = treap.split(j - i)
+    left, treap.root = treap.split(i)
+    treap.root, right = treap.split(j - i)
     result = treap.merge(left, right)
 
     if c == 1:
-        result = treap.merge(treap, result)
+        result = treap.merge(treap.root, result)
     elif c == 2:
-        result = treap.merge(result, treap)
+        result = treap.merge(result, treap.root)
 
     return result
 
@@ -43,9 +44,11 @@ if __name__ == '__main__':
     n, m = map(int, input().split())
     a = list(map(int, input().split()))
 
-    treap = Treap(a[0], random())
-    for i in a[1:]:
-        treap = treap.merge(treap, Treap(i, random()))
+    treap = Treap()
+
+    for i in a:
+        treap.insert(i)
+    print(str(treap))
 
     queries = []
     for _ in range(m):
@@ -56,4 +59,4 @@ if __name__ == '__main__':
         treap = handle(treap, c, i, j)
 
     print(abs(treap[1] - treap[n]))
-    print(treap)
+    print(str(treap))

@@ -12,8 +12,7 @@ Output:
 
 '''
 
-from ds.Treap import Treap
-from ds.BinarySearchTree import BinarySearchTree
+from src.ds.BinarySearchTree import BinarySearchTree
 
 if __name__ == '__main__':
     tree = BinarySearchTree()
@@ -24,7 +23,7 @@ if __name__ == '__main__':
     for i in range(t):
         tree.insert(arr[i])
 
-    tree.root = tree.deleteNode(tree.root, 5)
+    tree.deleteNode(5)
 
     print('Breadth-First Traversal')
     tree.bft()

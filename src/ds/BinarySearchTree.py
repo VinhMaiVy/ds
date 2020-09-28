@@ -56,7 +56,7 @@ class BinarySearchTree:
             current = current.left
         return current
 
-    def deleteNode(self, root_node, data):
+    def _deleteNode(self, root_node, data):
 
         # Base Case
         if root_node is None:
@@ -65,12 +65,12 @@ class BinarySearchTree:
         # If the key to be deleted is smaller than the root's
         # key then it lies in  left subtree
         if data < root_node.data:
-            root_node.left = self.deleteNode(root_node.left, data)
+            root_node.left = self._deleteNode(root_node.left, data)
 
         # If the kye to be delete is greater than the root's key
         # then it lies in right subtree
         elif(data > root_node.data):
-            root_node.right = self.deleteNode(root_node.right, data)
+            root_node.right = self._deleteNode(root_node.right, data)
 
         # If key is same as root's key, then this is the node
         # to be deleted
@@ -95,9 +95,12 @@ class BinarySearchTree:
             root_node.data = temp.data
 
             # Delete the inorder successor
-            root_node.right = self.deleteNode(root_node.right, temp.data)
+            root_node.right = self._deleteNode(root_node.right, temp.data)
 
         return root_node
+
+    def deleteNode(self, data):
+        self.root = self._deleteNode(self.root, data)
 
     def bft(self):  # Breadth-First Traversal
         self.root.level = 0
