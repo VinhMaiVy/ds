@@ -4,13 +4,15 @@ Created on Sep 21, 2020
 @author: vinhm
 
 Input:
-6
-4 2 3 1 7 6
+10
+4 2 8 3 1 10 7 6 9 5
 
 Output:
 
 
 '''
+
+from ds.Treap import Treap
 from ds.BinarySearchTree import BinarySearchTree
 
 if __name__ == '__main__':
@@ -22,8 +24,13 @@ if __name__ == '__main__':
     for i in range(t):
         tree.insert(arr[i])
 
-    print('tree root is:', tree.root)
-    print('tree min is:', tree.min())
-    print('tree max is:', tree.max())
-    
-    tree.sort()    
+    tree.root = tree.deleteNode(tree.root, 5)
+
+    print('Breadth-First Traversal')
+    tree.bft()
+    print('Inorder Traversal')
+    tree.inorder()
+    print('Preorder Traversal')
+    tree.preorder()
+    print('Postorder Traversal')
+    tree.postorder()

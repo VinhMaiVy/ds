@@ -2,84 +2,75 @@
 
 from random import randint
 
+
 class TreapNode(object):
-    
-    def __init__(self,key,priority):
-        self.key = key
+
+    def __init__(self, data, priority):
+        self.data = data
         self.priority = priority
-        self.l = None
-        self.r = None
+        self.left = None
+        self.right = None
+
 
 class Treap(object):
-    
+
     @staticmethod
     def gen():
-        return randint(1,2**64)
-    
+        return randint(1, 2**64)
+
     def __init__(self):
         self.root = None
-    
-    def split(self,t,key):
-        if t == None:
-            return (None,None)
-        if key < t.key:
-            l,t.l = self.split(t.l,key)
-            r = t
-            return (l,r)
+
+    def split(self, tp_node, data):
+        if tp_node is None:
+            return (None, None)
+        if data < tp_node.data:
+            left, tp_node.left = self.split(tp_node.left, data)
+            right = tp_node
+            return (left, right)
         else:
-            t.r,r = self.split(t.r,key)
-            l = t
-            return (l,r)
-    
-    def merge(self,l,r):
-        if l == None:
-            return r
-        elif r == None:
-            return l
-        elif l.priority > r.priority:
-            l.r = self.merge(l.r,r)
-            return l
+            tp_node.right, right = self.split(tp_node.right, data)
+            left = tp_node
+            return (left, right)
+
+    def merge(self, left, right):
+        if left is None:
+            return right
+        elif right is None:
+            return left
+        elif left.priority > right.priority:
+            left.right = self.merge(left.right, right)
+            return left
         else:
-            r.l = self.merge(l,r.l)
-            return r
-    
-    def find(self,t,key):
-        if t == None:
+            right.left = self.merge(left, right.left)
+            return right
+
+    def find(self, tp_node, data):
+        if tp_node is None:
             return False
-        if t.key == key:
+        if tp_node.data == data:
             return True
-        elif key < t.key:
-            return self.find(t.l,key)
+        elif data < tp_node.data:
+            return self.find(tp_node.left, data)
         else:
-            return self.find(t.r,key)
-    
-    def insert(self,key):
-        novo = TreapNode(key,self.gen())
-        if self.root == None:
-            self.root = novo
+            return self.find(tp_node.right, data)
+
+    def insert(self, data):
+        new_node = TreapNode(data, self.gen())
+        if self.root is None:
+            self.root = new_node
             return
-        L,R = self.split(self.root,key - 1)
-        self.root = self.merge(L,novo)
-        self.root = self.merge(self.root,R)
-    
-    def get_height(self,t):
-        if t == None:
+        LEFT, RIGHT = self.split(self.root, data - 1)
+        self.root = self.merge(LEFT, new_node)
+        self.root = self.merge(self.root, RIGHT)
+
+    def get_height(self, tp_node):
+        if tp_node is None:
             return 0
-        ans = 1
-        ans = max(ans,self.get_height(t.l) + 1)
-        ans = max(ans,self.get_height(t.r) + 1)
-        return ans
-    
-    def altura(self):
-        valor = self.get_height(self.root)
-        return valor
+        result = 1
+        result = max(result, self.get_height(tp_node.left) + 1)
+        result = max(result, self.get_height(tp_node.right) + 1)
+        return result
 
-alturas = []
-
-for i in range(100):
-    arvore = Treap()
-    for j in range(10000):
-        arvore.insert(j)
-    alturas.append(arvore.altura())
-
-print(sum(alturas)/len(alturas))
+    def height(self):
+        return self.get_height(self.root)
