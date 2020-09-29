@@ -11,7 +11,7 @@ Output:
 
 
 '''
-from src.ds.BinaryHeapTree import BinaryHeapTree
+from ds.BinaryHeapTree import BinaryHeapTree
 
 if __name__ == '__main__':
 

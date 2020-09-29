@@ -3,22 +3,9 @@
 """
 Treap
 
-Input:
-10 4
-1 2 3 4 5 6 7 8 9 10
-1 2 4
-2 3 5
-1 4 7
-2 1 4
-
-Output:
-1
-2 3 6 5 7 8 4 1
-
-
 """
 
-import random
+# import random
 
 
 class Treap:
@@ -149,45 +136,16 @@ def split(t, index):
     return t, leftover
 
 
-def handle(t, key, start, end):
-    if debug:
-        print('--- handling: ', t.val, key, start, end, '---')
-
-    left, t = split(t, start)         # <---
-
-    if debug:
-        print('left=', left)
-        print('t=', t, '\n')
-
-    t, right = split(t, end - start)  # <---
-
-    if debug:
-        print('t=', t)
-        print('right=', right, '\n')
-
-    res = merge(left, right)          # <---
-
-    if debug:
-        print('left+right=', res)
-
-    if key == 1:
-        res = merge(t, res)
-    else:
-        res = merge(res, t)
-
-    return res
-
-
 if __name__ == '__main__':
-    debug = True
+    debug = False
     # n, m = map(int, input().split())
     # n, m = 10, 4
-    n, m = 10, 4
+    n = 10
     # a = list(map(int, input().split()))
-    # a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    a = [i for i in range(n)]
+    a = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    # a = [i for i in range(n)]
     # priorities = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-    priorities = random.sample(range(0, n), n)
+    # priorities = random.sample(range(0, n), n)
     priorities = [4, 8, 5, 1, 6, 9, 3, 0, 2, 7]
     print('a: ', a)
     print('p: ', priorities)
@@ -198,17 +156,20 @@ if __name__ == '__main__':
         # t = merge(t, Treap(i, random()))
         t = merge(t, Treap(i, priorities.pop(0)))
         # t.bft()
+    print('t: ', t)
     # queries = []
     # for _ in range(m):
     #    queries.append(list(map(int, input().split())))
     # queries = [[1, 1, 4], [2, 2, 5], [1, 3, 6], [2, 0, 4]]
-    queries = [[1, 3, 7]]
+    left, t = split(t, 3)
+    print('left: ', left)
+    left.bft()
+    print('t: ', t)
+    t, right = split(t, 4)
+    print('right: ', right)
+    res = merge(left, right)
+    print('merge: ', res)
+    print('t: ', t)
 
-    print()
-    for key, start, end in queries:
-        t = handle(t, key, start, end)
-        print('t:  [', t, ']')
-
-    t.bft()
     # print('\na[0]-a[n-1]:', abs(t[1] - t[n]))
     # print('t: ', t)

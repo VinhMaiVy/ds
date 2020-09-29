@@ -32,7 +32,7 @@ Output:
 
 
 # from random import random
-from src.ds.Treap2 import Treap
+from ds.Treap2 import Treap
 
 
 def handle(treap, c, i, j):

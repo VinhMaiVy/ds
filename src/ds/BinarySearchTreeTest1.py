@@ -12,7 +12,7 @@ Output:
 
 '''
 
-from src.ds.BinarySearchTree import BinarySearchTree
+from ds.BinarySearchTree import BinarySearchTree
 
 if __name__ == '__main__':
     tree = BinarySearchTree()

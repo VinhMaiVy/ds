@@ -91,7 +91,7 @@ def split(t, index):
         # print('taking leftovers')
         t.size -= leftover.size
         # leftover exists because we already checked
-        # if they wanted everyhing at the top
+        # if they wanted everything at the top
         return t, leftover
 
 
