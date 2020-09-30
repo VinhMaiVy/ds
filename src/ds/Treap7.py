@@ -13,7 +13,7 @@ import os
 from random import Random
 
 
-class _TreapNode:
+class TreapNode:
     """Treap Node"""
     def __init__(self, key, value, priority,
                  parent=None, left=None, right=None):
@@ -56,7 +56,7 @@ class Treap:
         node, parent = self._find_node(key, self.root)
         if node is None:
             priority = self.random.randrange(self.max_heap_id)
-            node = _TreapNode(key, value, priority)
+            node = TreapNode(key, value, priority)
             if parent is None:
                 self.root = node
             elif node.key < parent.key:
