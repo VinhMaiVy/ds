@@ -15,17 +15,17 @@ from random import Random
 
 class _TreapNode:
     """Treap Node"""
-    def __init__(self, key, value, heap_id,
+    def __init__(self, key, value, priority,
                  parent=None, left=None, right=None):
         self.key = key
         self.value = value
-        self.heap_id = heap_id
+        self.priority = priority
         self.parent = parent
         self.left = left
         self.right = right
 
     def __repr__(self):
-        return str((self.key, self.value, self.heap_id))
+        return str((self.key, self.value, self.priority))
 
 
 class Treap:
@@ -46,7 +46,7 @@ class Treap:
     False
     """
 
-    def __init__(self, seed=0, max_heap_id=2**64):
+    def __init__(self, seed=0, max_heap_id=2**8):
         self.random = Random(seed)
         self.max_heap_id = max_heap_id
         self.root = None
@@ -55,8 +55,8 @@ class Treap:
         """Set a key, value pair in the tree."""
         node, parent = self._find_node(key, self.root)
         if node is None:
-            heap_id = self.random.randrange(self.max_heap_id)
-            node = _TreapNode(key, value, heap_id)
+            priority = self.random.randrange(self.max_heap_id)
+            node = _TreapNode(key, value, priority)
             if parent is None:
                 self.root = node
             elif node.key < parent.key:
@@ -117,7 +117,7 @@ class Treap:
             self.root = node
 
     def _prioritize(self, node):
-        while node.parent and node.parent.heap_id < node.heap_id:
+        while node.parent and node.parent.priority < node.priority:
             self._pivot_up(node)
 
     def __contains__(self, key):
@@ -147,7 +147,7 @@ class Treap:
             while node.left and node.right:
                 # Pivot a child node up while the node to be deleted has
                 # both left and right children.
-                if node.left.heap_id > node.right.heap_id:
+                if node.left.priority > node.right.priority:
                     self._pivot_up(node.left)
                 else:
                     self._pivot_up(node.right)
@@ -202,7 +202,7 @@ class Treap:
                     assert node.key < node.right.key
                 if node.parent:
                     parent = node.parent
-                    assert node.heap_id < parent.heap_id
+                    assert node.priority < parent.priority
                     assert parent.left == node or parent.right == node
                 nodes.append((node.left, min_bound, node.key))
                 nodes.append((node.right, node.key, max_bound))
@@ -223,14 +223,15 @@ class Treap:
 
 if __name__ == '__main__':
     treap = Treap()
-    treap[0] = 1
-    treap[1] = 2
-    treap[2] = 3
-    treap[3] = 4
+    treap[0] = 9
+    treap[1] = 8
+    treap[2] = 7
+    treap[3] = 6
     treap[4] = 5
-    treap[5] = 6
-    treap[6] = 7
-    treap[7] = 8
-    treap[8] = 9
-    treap[9] = 10
+    treap[5] = 4
+    treap[6] = 3
+    treap[7] = 2
+    treap[8] = 1
+    treap[9] = 0
+    del treap[4]
     print(treap)
