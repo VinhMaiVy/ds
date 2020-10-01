@@ -10,9 +10,7 @@ Output:
 
 """
 
-
 from random import random
-from typing import Tuple
 
 
 class Node:
@@ -21,7 +19,7 @@ class Node:
     Treap is a binary tree by value and heap by priority
     """
 
-    def __init__(self, value: int = None):
+    def __init__(self, value: int=None):
         self.value = value
         self.prior = random()
         self.left = None
@@ -45,7 +43,7 @@ class Node:
         return value + left + right
 
 
-def split(root: Node, value: int) -> Tuple[Node, Node]:
+def split(root: Node, value: int) -> (Node, Node):
     """
     We split current tree into 2 trees with value:
 

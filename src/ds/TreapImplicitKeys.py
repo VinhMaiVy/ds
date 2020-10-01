@@ -1,20 +1,7 @@
 #!/bin/python3
 
 """
-Treap
-
-
-Input:
-8 4
-4 8 5 3 1 2 7 6
-1 2 4
-2 3 5
-1 4 7
-2 1 4
-
-Output:
-1
-2 3 6 5 7 8 4 1
+Treap with Implicit Keys
 
 Input:
 8 4
@@ -28,14 +15,13 @@ Output:
 1
 2 3 6 5 7 8 4 1
 
-
-
 """
 
 from random import random
 
 
 class Treap:
+
     def __init__(self, data, priority):
         self.data = data
         self.priority = priority

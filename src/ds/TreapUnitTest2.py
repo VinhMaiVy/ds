@@ -65,14 +65,6 @@ class Treap:
                 nodes.append((node.right, indent + 1))
         return "\n".join(lines)
 
-    """
-    def __str__(self):
-        res = str(self.root.left) if self.root.left else ''
-        res += str(self.root.data) + ' '
-        res += str(self.root.right) if self.root.right else ''
-        return res
-    """
-
     def __str__(self):
         # Just recursive print of a tree
         lines = []
@@ -91,7 +83,7 @@ class Treap:
         node, parent = self._find_node(key, self.root)
         if node is None:
 
-            priority = self.random.randrange(2**12)
+            priority = self.random.randrange(2 ** 12)
 
             node = TreapNode(key, data, priority)
 
