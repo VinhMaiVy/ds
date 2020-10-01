@@ -1,31 +1,33 @@
 #!/bin/python3
 
 """
-Python
-
-Input:
-
-Output:
-
+Treap 7
 
 """
-import os
+
 from random import Random
 
 
 class TreapNode:
-    """Treap Node"""
-    def __init__(self, key, value, priority,
+    """
+    Treap's node
+    Treap is a binary tree by value and heap by priority
+    """
+
+    def __init__(self, key, data, priority,
                  parent=None, left=None, right=None):
         self.key = key
-        self.value = value
+        self.data = data
         self.priority = priority
         self.parent = parent
         self.left = left
         self.right = right
 
     def __repr__(self):
-        return str((self.key, self.value, self.priority))
+        return str((self.data, self.key, self.priority))
+
+    def __str__(self):
+        return str((self.data, self.key, self.priority))
 
 
 class Treap:
@@ -46,17 +48,53 @@ class Treap:
     False
     """
 
-    def __init__(self, seed=0, max_heap_id=2**8):
-        self.random = Random(seed)
-        self.max_heap_id = max_heap_id
+    def __init__(self):
+        self.random = Random(0)
         self.root = None
 
-    def __setitem__(self, key, value):
-        """Set a key, value pair in the tree."""
+    def __repr__(self):
+        """Return a string representation of treap."""
+        lines = []
+        nodes = [(self.root, 0)]
+        while nodes:
+            node, indent = nodes.pop()
+            name = str(node) if node else 'None'
+            lines.append(' ' * indent + name)
+            if node:
+                nodes.append((node.left, indent + 1))
+                nodes.append((node.right, indent + 1))
+        return "\n".join(lines)
+
+    """
+    def __str__(self):
+        res = str(self.root.left) if self.root.left else ''
+        res += str(self.root.data) + ' '
+        res += str(self.root.right) if self.root.right else ''
+        return res
+    """
+
+    def __str__(self):
+        # Just recursive print of a tree
+        lines = []
+        nodes = [self.root]
+        while nodes:
+            node = nodes.pop()
+            if node:
+                lines.append(str(node.data) + ' ')
+            if node:
+                nodes.append(node.left)
+                nodes.append(node.right)
+        return "".join(lines)
+
+    def __setitem__(self, key, data):
+        """Set a key, data pair in the tree."""
         node, parent = self._find_node(key, self.root)
         if node is None:
-            priority = self.random.randrange(self.max_heap_id)
-            node = TreapNode(key, value, priority)
+
+            priority = self.random.randrange(2**12)
+
+            node = TreapNode(key, data, priority)
+
             if parent is None:
                 self.root = node
             elif node.key < parent.key:
@@ -66,7 +104,7 @@ class Treap:
             node.parent = parent
             self._prioritize(node)
         else:
-            node.value = value
+            node.data = data
 
     def _find_node(self, key, node, parent=None):
         while True:
@@ -126,15 +164,15 @@ class Treap:
         return node is not None
 
     def __getitem__(self, key):
-        """Return the value corresponding to key in the tree."""
+        """Return the data corresponding to key in the tree."""
         node = self._find_node(key, self.root)[0]
         if node is None:
             raise KeyError(key)
         else:
-            return node.value
+            return node.data
 
     def __delitem__(self, key):
-        """Delete a key, value pair identified by key from the tree."""
+        """Delete a key, data pair identified by key from the tree."""
         node, parent = self._find_node(key, self.root)
 
         if node is None:
@@ -167,21 +205,21 @@ class Treap:
         node.right = None
 
     def min(self):
-        """Return the (key, value) pair with minimum key."""
+        """Return the (key, data) pair with minimum key."""
         if self.root is None:
             return None
         node, parent = self._traverse(self.root, 'left')
-        return node.key, node.value
+        return node.key, node.data
 
     def max(self):
-        """Return the (key, value) pair with maximum key."""
+        """Return the (key, data) pair with maximum key."""
         if self.root is None:
             return None
         node, parent = self._traverse(self.root, 'right')
-        return node.key, node.value
+        return node.key, node.data
 
     def clear(self):
-        """Clear all the (key, value) pairs from the tree."""
+        """Clear all the (key, data) pairs from the tree."""
         self.root = None
 
     def _traverse(self, node, attr, parent=None):
@@ -189,41 +227,10 @@ class Treap:
             node, parent = getattr(node, attr), node
         return node, parent
 
-    def check(self):
-        """Check treap invariants."""
-        nodes = [(self.root, float('-inf'), float('inf'))]
-        while nodes:
-            node, min_bound, max_bound = nodes.pop()
-            if node:
-                assert min_bound < node.key < max_bound
-                if node.left:
-                    assert node.key > node.left.key
-                if node.right:
-                    assert node.key < node.right.key
-                if node.parent:
-                    parent = node.parent
-                    assert node.priority < parent.priority
-                    assert parent.left == node or parent.right == node
-                nodes.append((node.left, min_bound, node.key))
-                nodes.append((node.right, node.key, max_bound))
-
-    def __repr__(self):
-        """Return a string representation of treap."""
-        lines = []
-        nodes = [(self.root, 0)]
-        while nodes:
-            node, indent = nodes.pop()
-            name = str(node) if node else 'None'
-            lines.append(' ' * indent + name)
-            if node:
-                nodes.append((node.right, indent + 1))
-                nodes.append((node.left, indent + 1))
-        return os.linesep.join(lines)
-
 
 if __name__ == '__main__':
     treap = Treap()
-    treap[0] = 9
+    treap[0] = 0
     treap[1] = 8
     treap[2] = 7
     treap[3] = 6
@@ -232,6 +239,9 @@ if __name__ == '__main__':
     treap[6] = 3
     treap[7] = 2
     treap[8] = 1
-    treap[9] = 0
-    del treap[4]
-    print(treap)
+    treap[9] = 9
+    # del treap[4]
+    print(repr(treap))
+    print(str(treap))
+    print(treap.min())
+    print(treap.max())
