@@ -17,6 +17,7 @@ from random import Random
 
 class _TreapNode:
     """Treap Node"""
+
     def __init__(self, key, value, heap_id,
                  parent=None, left=None, right=None):
         self.key = key
@@ -48,7 +49,7 @@ class Treap:
     False
     """
 
-    def __init__(self, seed=0, max_heap_id=2**64):
+    def __init__(self, seed=0, max_heap_id=2 ** 64):
         self.random = Random(seed)
         self.max_heap_id = max_heap_id
         self.root = None
@@ -224,6 +225,7 @@ class Treap:
 
 
 class TestTreap(unittest.TestCase):
+
     def setUp(self):
         self.treap = Treap()
 
@@ -273,7 +275,10 @@ class TestTreap(unittest.TestCase):
         try:
             from progressbar import ProgressBar
         except ImportError:
-            ProgressBar = lambda: iter
+
+            def ProgressBar(): return iter
+
+            # ProgressBar = lambda: iter
 
         treap = self.treap
         treap.clear()
