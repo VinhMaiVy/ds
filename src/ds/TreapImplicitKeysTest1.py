@@ -1,7 +1,7 @@
 #!/bin/python3
 
 """
-Treap
+Treap with Implicit Keys
 
 
 Input:

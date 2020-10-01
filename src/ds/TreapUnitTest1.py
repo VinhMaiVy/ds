@@ -1,3 +1,13 @@
+"""
+Treap with UnitTest
+
+Input:
+
+Output:
+
+
+"""
+
 import os
 import doctest
 import unittest
@@ -162,14 +172,14 @@ class Treap:
         """Return the (key, value) pair with minimum key."""
         if self.root is None:
             return None
-        node, parent = self._traverse(self.root, 'left')
+        node, _ = self._traverse(self.root, 'left')
         return node.key, node.value
 
     def max(self):
         """Return the (key, value) pair with maximum key."""
         if self.root is None:
             return None
-        node, parent = self._traverse(self.root, 'right')
+        node, _ = self._traverse(self.root, 'right')
         return node.key, node.value
 
     def clear(self):
