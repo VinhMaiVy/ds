@@ -5,7 +5,6 @@ Treap 9
 
 """
 
-
 from random import Random
 
 
@@ -17,7 +16,7 @@ class TreapNode:
 
     def __init__(self, data: int=None, random: Random=None):
         self.data = data
-        self.priority = random.randrange(2**12)
+        self.priority = random.randrange(2 ** 12)
         self.left = None
         self.right = None
 
@@ -36,16 +35,11 @@ class TreapNode:
 
     def __str__(self):
         """ Just recursive print of a tree """
-        lines = []
-        nodes = [self]
-        while nodes:
-            node = nodes.pop()
-            if node:
-                lines.append(str(node.data) + ' ')
-            if node:
-                nodes.append(node.left)
-                nodes.append(node.right)
-        return "".join(lines)
+        if self.left:
+            return str(self.left)
+        return str(self.data) + ' '
+        if self.right:
+            return str(self.right)
 
 
 def splitTreap(root: TreapNode, data: int) -> (TreapNode, TreapNode):
@@ -143,14 +137,13 @@ if __name__ == "__main__":
 
     root = None
     root = insertTreap(root, 0, random)
+    root = insertTreap(root, 1, random)
+    root = insertTreap(root, 2, random)
+    root = insertTreap(root, 3, random)
+    root = insertTreap(root, 4, random)
+    root = insertTreap(root, 9, random)
     root = insertTreap(root, 8, random)
     root = insertTreap(root, 7, random)
     root = insertTreap(root, 6, random)
     root = insertTreap(root, 5, random)
-    root = insertTreap(root, 4, random)
-    root = insertTreap(root, 3, random)
-    root = insertTreap(root, 2, random)
-    root = insertTreap(root, 1, random)
-    root = insertTreap(root, 9, random)
-    print(repr(root))
     print(str(root))
