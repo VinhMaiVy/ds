@@ -43,9 +43,10 @@ class TreapNode:
 
 
 class Treap:
+
     def __init__(self, root: TreapNode, random: Random):
         self.root = root
-        self.root.priority = random.randrange(2**16)
+        self.root.priority = random.randrange(2 ** 16)
 
     def __getitem__(self, index):
         if self.root.left and index <= self.root.left.root.size:
@@ -148,6 +149,7 @@ if __name__ == '__main__':
 
     for c, i, j in queries:
         t = handleTreap(t, c, i, j)
+        # print(t)
 
     print(abs(t[1] - t[n]))
     print(t)
