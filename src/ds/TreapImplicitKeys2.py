@@ -2,19 +2,6 @@
 
 """
 Treap with Implicit Keys
-
-Input:
-8 4
-1 2 3 4 5 6 7 8
-1 2 4
-2 3 5
-1 4 7
-2 1 4
-
-Output:
-1
-2 3 6 5 7 8 4 1
-
 """
 
 from random import Random
@@ -34,6 +21,19 @@ class Treap:
         res += str(self.key) + ' '
         res += str(self.right) if self.right else ''
         return res
+
+    def __repr__(self):
+        """Return a string representation of treap."""
+        lines = []
+        nodes = [(self, 0)]
+        while nodes:
+            node, indent = nodes.pop()
+            name = str(node.key) + '-' + str(node.priority) if node else '*'
+            lines.append(' ' * indent + name)
+            if node:
+                nodes.append((node.left, indent + 1))
+                nodes.append((node.right, indent + 1))
+        return "\n".join(lines)
 
 
 def split(root: Treap, key: int) -> (Treap, Treap):
@@ -92,7 +92,7 @@ def erase1(root: Treap, key: int) -> Treap:
     return merge(left, right)
 
 
-def insert(root: Treap, x: Treap) -> Treap:
+def insert2(root: Treap, x: Treap) -> Treap:
 
     if not root:
         return x
@@ -100,32 +100,34 @@ def insert(root: Treap, x: Treap) -> Treap:
         x.left, x.right = split(root, x.key)
         return x
     elif x.key < root.key:
-        root.left = insert(root.left, x)
+        root.left = insert2(root.left, x)
         return root
     else:
-        root.right = insert(root.right, x)
+        root.right = insert2(root.right, x)
         return root
 
 
-def erase(root: Treap, key: int) -> Treap:
+def erase2(root: Treap, key: int) -> Treap:
     if not root:
         return
     if root.key == key:
         return merge(root.left, root.right)
     elif key < root.key:
-        erase(root.left, key)
+        erase2(root.left, key)
     else:
-        erase(root.right, key)
+        erase2(root.right, key)
 
 
 if __name__ == '__main__':
 
     # a = [0, 8, 7, 6, 5, 4, 3, 2, 1, 9]
-    a = [0, 8, 7, 6, 2]
+    a = [0, 8]
 
     random = Random(0)
     t = Treap(a[0], random.randrange(2 ** 16))
     for i in a[1:]:
         # t = merge(t, Treap(i, random.randrange(2 ** 16)))
         t = insert1(t, Treap(i, random.randrange(2 ** 16)))
+
     print(t)
+    print(repr(t))

@@ -200,14 +200,14 @@ class Treap:
         """Return the (key, data) pair with minimum key."""
         if self.root is None:
             return None
-        node, parent = self._traverse(self.root, 'left')
+        node, _ = self._traverse(self.root, 'left')
         return node.key, node.data
 
     def max(self):
         """Return the (key, data) pair with maximum key."""
         if self.root is None:
             return None
-        node, parent = self._traverse(self.root, 'right')
+        node, _ = self._traverse(self.root, 'right')
         return node.key, node.data
 
     def clear(self):
