@@ -3,18 +3,6 @@
 """
 Treap with Implicit Keys
 
-Input:
-8 4
-1 2 3 4 5 6 7 8
-1 2 4
-2 3 5
-1 4 7
-2 1 4
-
-Output:
-1
-2 3 6 5 7 8 4 1
-
 """
 
 from random import random
@@ -22,118 +10,205 @@ from random import random
 
 class Treap:
 
-    def __init__(self, data, priority):
-        self.data = data
+    def __init__(self, val, priority):
+        self.val = val
         self.priority = priority
         self.size = 1
         self.right = None
         self.left = None
 
     def __getitem__(self, index):
-        if self.left and index <= self.left.size:
+        if self.left and index < self.left.size:
             return self.left[index]
-        index -= self.left.size if self.left else 0
-        if index == 1:
-            return self.data
-        return self.right[index - 1]
+        elif self.left and self.right and index > self.left.size:
+            return self.right[index - self.left.size - 1]
+        return self.val
 
     def __str__(self):
         res = str(self.left) if self.left else ''
-        res += str(self.data) + ' '
+        res += str(self.val) + ' '
         res += str(self.right) if self.right else ''
         return res
 
+    def __repr__(self):
+        """Return a string representation of treap."""
+        lines = []
+        nodes = [(self, 0)]
+        while nodes:
+            node, indent = nodes.pop()
 
-def split(t, index):
-        if not index:
-            return None, t
-        if not t:
-            return None, None
+            name = 'p=' + str(node.priority) + '-s=' + str(node.size) + '-v=' + str(node.val) \
+                if node else '*'
 
-        # print('asked to split', t.data, t.size, 'on', index)
+            lines.append(' ' * indent + name)
+            if node:
+                nodes.append((node.left, indent + 1))
+                nodes.append((node.right, indent + 1))
+        return "\n".join(lines)
 
-        if index == t.size:
-            # print('index == t.size, returning', t.data)
-            return t, None
-
-        if t.left and t.left.size >= index:
-            # print('t.l.s:', t.left.size, '>=', index)
-            res, t.left = split(t.left, index)
-            t.size -= res.size
-            return res, t
-
-        index -= t.left.size if t.left else 0
-        # rint('index is now', index)
-        if index == 1:
-            # print('index is 1, cut off', t.right.data
-            # if t.right else 'None', 'and return', t.data)
-            temp = t.right
-            t.right = None
-            t.size -= temp.size
-            return t, temp
-
-        # definitely to the right
-        t.right, leftover = split(t.right, index - 1)
-        # print('taking leftovers')
-        t.size -= leftover.size
-        # leftover exists because we already checked
-        # if they wanted everyhing at the top
-        return t, leftover
+    def __len__(self):
+        return self.size
 
 
-def merge(left, right):  # print('merging')
-        if not (left and right):
-            return left or right
+def merge(left: Treap, right: Treap) -> Treap:
+    # print('merging')
+    if not (left and right):
+        return left or right
 
-        if left.priority > right.priority:
-            left.size += right.size
-            left.right = merge(left.right, right)
-            # print('returning left:', left.data)
-            return left
+    # print('left:', left.val, left.priority, left.size,
+    #   'right:', right.val, right.priority, right.size)
 
-        # left is smaller
-        right.size += left.size
-        right.left = merge(left, right.left)
-        # print('returning right:', right.data)
-        return right
+    if left.priority > right.priority:
+        left.size = left.size + right.size  # <<< size
+        left.right = merge(left.right, right)
+        # print('returning left:', left.val)
+        return left
+
+    # left is smaller
+    right.size = right.size + left.size  # <<< size
+    right.left = merge(left, right.left)
+    # print('returning right:', right.val)
+    return right
 
 
-def handle(t, c, i, j):
+def split(t: Treap, index) -> (Treap, Treap):
 
-    i -= 1
+    '''
+    void split( pnode root, int k, pnode &left, pnode &right, int add = 0 ) {
 
-    left, t = split(t, i)
-    # print('left: ', left)
-    t, right = split(t, j - i)
-    # print('right: ', right)
-    result = merge(left, right)
-    # print('merge: ', result)
-    # print('cut: ', t)
+      if( !root ) {
+        left = right = NULL;
+        return;
+      }
 
-    if c == 1:
-        result = merge(t, result)
-    elif c == 2:
-        result = merge(result, t)
+      int cur_key = add + cnt( root->left );
 
-    # print('result: ', result, '\n')
-    return result
+      if( cur_key < k ) {
+        split( root->right, k, root->right, right, add+1+cnt( root->left ) );
+        left = root;
+      }
+      else {
+        split( root->left, k, left, root->left, add );
+        right = root;
+      }
+      upd_cnt( root );
+    }
+
+    '''
+
+    if not t:
+        return (None, None)
+
+    if not index:
+        return (None, t)
+
+    if index >= t.size:
+        # print('index == t.size, returning', t.val)
+        return (t, None)
+
+    # print('asked to split', t.val, t.size, 'on', index)
+    if t.left and t.left.size >= index:
+        # print('t.l.s:', t.left.size, '>=', index)
+        res, t.left = split(t.left, index)
+        t.size -= res.size
+        return (res, t)
+
+    index -= t.left.size if t.left else 0
+    # print('index is now', index)
+    if index == 1:
+        # print('index is 1, cut off', t.right.val
+        #  if t.right else 'None', 'and return', t.val)
+        temp = t.right
+        t.right = None
+        t.size -= temp.size
+        return (t, temp)
+
+    # definitely to the right
+    t.right, leftover = split(t.right, index - 1)
+    # print('taking leftovers')
+    # leftover exists because we already checked
+    #  if they wanted everything at the top
+    t.size -= leftover.size
+    return (t, leftover)
+
+
+def insert(root: Treap, val: int) -> Treap:
+    """
+    Insert element
+
+    Split current tree with a value into left, right,
+    Insert new node into the middle
+    Merge left, node, right into root
+    """
+    node = Treap(val, random())
+    left, right = split(root, val)
+    return merge(merge(left, node), right)
+
+
+def erase(root: Treap, val: int) -> Treap:
+    """
+    Erase element
+
+    Split all nodes with values less into left,
+    Split all nodes with values greater into right.
+    Merge left, right
+    """
+    left, right = split(root, val - 1)
+    _, right = split(right, val)
+    return merge(left, right)
+
+
+def handle(t: Treap, key: int, start: int, end: int) -> Treap:
+
+    # print('handling', t.val, key, start, end)
+    start -= 1
+    left, t = split(t, start)
+    t, right = split(t, end - start)
+    res = merge(left, right)
+
+    if key == 1:
+        res = merge(t, res)
+    else:
+        res = merge(res, t)
+
+    return res
 
 
 if __name__ == '__main__':
+    # n, m = map(int, input().split())
+    # a = list(map(int, input().split()))
+    # ------- a = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+    # --------p = [5, 7, 6, 9, 2, 4, 1, 8, 3]
 
-    n, m = map(int, input().split())
-    a = list(map(int, input().split()))
+    a = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
+    # priorities = [5, 7, 6, 9, 2, 4, 1, 8, 3]
+
+    # print('a', a)
     t = Treap(a[0], random())
+    # t = Treap(a[0], priorities.pop(0))
     for i in a[1:]:
-        t = merge(t, Treap(i, random()))
+        # t = merge(t, Treap(i, random()))
+        # t = merge(t, Treap(i, priorities.pop(0)))
+        t = insert(t, i)
 
-    queries = []
-    for _ in range(m):
-        queries.append(list(map(int, input().split())))
+    print(t, len(t))
 
-    for c, i, j in queries:
-        t = handle(t, c, i, j)
+    # t = erase(t, 5)
+    # print(t, len(t))
 
-    print(abs(t[1] - t[n]))
-    print(t)
+    l, r = split(t, 4)
+    print(l, len(l))
+    print(r, len(r))
+
+    # l = erase(l, 2)
+    print(l, len(l))
+    t = merge(l, r)
+    print(t, len(t))
+    # print(repr(t))
+
+    # for _ in range(m):
+    # print(t)
+    # t = handle(t, *map(int, input().split()))
+    # print(abs(t[1] - t[n]))
+    # print(t)
