@@ -3,30 +3,21 @@
 """
 Treap with Implicit Keys
 
-Input:
-8 4
-1 2 3 4 5 6 7 8
-1 2 4
-2 3 5
-1 4 7
-2 1 4
-
-Output:
-1
-2 3 6 5 7 8 4 1
-
-
 """
 
-from random import random
-from random import randint
+# from random import randint
+# from random import random
+from random import Random
 
 
 class Treap:
 
-    def __init__(self, val, priority):
+    def __init__(self, val: int, seed=0):
+        global random
+        if seed:
+            random = Random(0)
         self.val = val
-        self.priority = priority
+        self.priority = random.randint(0, 300)
         self.size = 1
         self.right = None
         self.left = None
@@ -64,6 +55,30 @@ class Treap:
         return self.size
 
 
+def insert(root: Treap, index: int, treap: Treap) -> Treap:
+    """
+    Insert element
+    """
+    left, right = split(root, index)
+    return merge(merge(left, treap), right)
+
+
+def erase(root: Treap, index: int) -> Treap:
+    """
+    Erase element
+    """
+    left, right = split(root, index)
+    _, right = split(right, 1)
+    return merge(left, right)
+
+
+def replace(root: Treap, index: int, treap: Treap) -> Treap:
+    """
+    Replace element
+   """
+    return insert(erase(root, index), index, treap)
+
+
 def merge(left: Treap, right: Treap) -> Treap:
     # print('merging')
     if not (left and right):
@@ -90,7 +105,7 @@ def split(t: Treap, index) -> (Treap, Treap):
     if not t:
         return (None, None)
 
-    if not index:
+    if index <= 0:
         return (None, t)
 
     if index >= t.size:
@@ -113,53 +128,16 @@ def split(t: Treap, index) -> (Treap, Treap):
     return (t, leftover)
 
 
-def insert(root: Treap, index: int, val: int) -> Treap:
-    """
-    Insert element
-
-    Split current tree with a value into left, right,
-    Insert new node into the middle
-    Merge left, node, right into root
-    """
-    node = Treap(val, random())
-    left, right = split(root, index)
-    return merge(merge(left, node), right)
-
-
-def append(root: Treap, t: Treap) -> Treap:
-    """
-    Insert Treap
-
-    Split current tree with a value into left, right,
-    Insert new node into the middle
-    Merge left, node, right into root
-    """
-    return merge(root, t)
-
-
-def erase(root: Treap, index: int) -> Treap:
-    """
-    Erase element
-
-    Split all nodes with values less into left,
-    Split all nodes with values greater into right.
-    Merge left, right
-    """
-    left, right = split(root, index)
-    # print('l=', left, ' r=', right)
-    _, right = split(right, 1)
-    # print('l=', left, ' r=', right)
-    return merge(left, right)
-
-
 if __name__ == '__main__':
 
-    n = 100
-    a = [i for i in range(n)]
+    n = 10
+    arr = [i for i in range(n, 0, -1)]
 
-    t = Treap(a[0], randint(0, n * 10))
-    for i in a[1:]:
-        t = merge(t, Treap(i, randint(0, n * 10)))
+    # First Node
+    t = Treap(arr[0], 1)
 
+    for a in arr[1:]:
+        t = merge(t, Treap(a))
+
+    t = replace(t, 5, Treap(99))
     print(t)
-    print(repr(t))
