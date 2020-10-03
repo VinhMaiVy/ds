@@ -5,14 +5,15 @@ Treap with Implicit Keys
 
 """
 
-from random import random
+from random import Random
 
 
 class Treap:
 
     def __init__(self, val: int):
+        global R
         self.val = val
-        self.priority = random()
+        self.priority = R.random()
         self.size = 1
         self.right = None
         self.left = None
@@ -38,7 +39,6 @@ class Treap:
         return res
 
     def __repr__(self):
-        """Return a string representation of treap."""
         lines = []
         nodes = [(self, 0)]
         while nodes:
@@ -137,6 +137,8 @@ def split(t: Treap, index: int) -> (Treap, Treap):
 
 if __name__ == '__main__':
 
+    R = Random(1)
+
     n = 10
     arr = [7, 8, 9, 3, 4, 5, 6, 0, 1, 2]
 
@@ -146,6 +148,9 @@ if __name__ == '__main__':
     for a in arr[1:]:
         t = merge(t, Treap(a))
     print(t)
+    print(repr(t))
+    print(t)
+    print(t[1])
     # print(repr(t))
 
     l, r = split(t, 3)

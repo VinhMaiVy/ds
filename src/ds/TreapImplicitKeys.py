@@ -38,7 +38,6 @@ class Treap:
         return res
 
     def __repr__(self):
-        """Return a string representation of treap."""
         lines = []
         nodes = [(self, 0)]
         while nodes:
@@ -92,7 +91,6 @@ def merge(left: Treap, right: Treap) -> Treap:
 
     # print('left:', left.val, left.priority, left.size,
     #   'right:', right.val, right.priority, right.size)
-
     if left.priority > right.priority:
         left.size = left.size + right.size  # <<<------------------------ size
         left.right = merge(left.right, right)
@@ -146,19 +144,15 @@ if __name__ == '__main__':
     for a in arr[1:]:
         t = merge(t, Treap(a))
     print(t)
-    # print(repr(t))
 
     l, r = split(t, 3)
     m, r = split(r, 4)
-
     t = merge(merge(r, m), l)
     print(t)
-    # print(repr(t))
     print(" ".join([str(t[i]) for i in range(len(t))]))
 
     t = replace(t, 5, 0)
     print(t)
 
     t = insert(t, 2, 8)
-    t = insert(t, 2, 7)
-    print(t)
+    print(repr(t))
