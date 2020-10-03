@@ -43,7 +43,7 @@ class Treap:
         while nodes:
             node, indent = nodes.pop()
 
-            name = 'p=' + str(node.priority * 100)[0:2] + '-s=' + str(node.size) + '-v=' + str(node.val) \
+            name = 'p=' + str(node.priority * 1000)[0:2] + '-s=' + str(node.size) + '-v=' + str(node.val) \
                 if node else '*'
 
             lines.append('   ' * indent + name)
@@ -54,6 +54,27 @@ class Treap:
 
     def __len__(self):
         return self.size
+
+
+def preorder(root: Treap) -> str:
+    res = str(root.val) + ' '
+    res += preorder(root.left) if root.left else ''
+    res += preorder(root.right) if root.right else ''
+    return res
+
+
+def inorder(root: Treap) -> str:
+    res = inorder(root.left) if root.left else ''
+    res += str(root.val) + ' '
+    res += inorder(root.right) if root.right else ''
+    return res
+
+
+def postorder(root: Treap) -> str:
+    res = postorder(root.left) if root.left else ''
+    res += postorder(root.right) if root.right else ''
+    res += str(root.val) + ' '
+    return res
 
 
 def insert(root: Treap, index: int, val: int) -> Treap:
@@ -148,11 +169,17 @@ if __name__ == '__main__':
     l, r = split(t, 3)
     m, r = split(r, 4)
     t = merge(merge(r, m), l)
-    print(t)
+
+    print('prep--', preorder(t))
+    print('in----', inorder(t))
+    print('post--', postorder(t))
+    # print(repr(t))
+
     print(" ".join([str(t[i]) for i in range(len(t))]))
 
     t = replace(t, 5, 0)
     print(t)
 
     t = insert(t, 2, 8)
-    print(repr(t))
+    # print(repr(t))
+    print(t)
