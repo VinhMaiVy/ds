@@ -3,19 +3,6 @@
 """
 Treap with Implicit Keys
 
-Input:
-8 4
-1 2 3 4 5 6 7 8
-1 2 4
-2 3 5
-1 4 7
-2 1 4
-
-Output:
-1
-2 3 6 5 7 8 4 1
-
-
 """
 
 from random import random
@@ -30,16 +17,19 @@ class Treap:
         self.right = None
         self.left = None
 
-    def __getitem__(self, index):
-        if self.left and index <= self.left.size:
-            return self.left[index]
-
-        index -= self.left.size if self.left else 0
-
+    def _getitem(self, root, index):
+        if root.left and (index <= root.left.size):
+            return self._getitem(root.left, index)
+        index -= root.left.size if root.left else 0
         if index == 1:
-            return self.val
+            return root.val
+        return self._getitem(root.right, index - 1)
 
-        return self.right[index - 1]
+    def __getitem__(self, index):
+        if index < 0 and index > self.size:
+            return None
+        else:
+            return self._getitem(self, index + 1)
 
     def __str__(self):
         res = str(self.left) if self.left else ''
@@ -48,15 +38,16 @@ class Treap:
         return res
 
     def __repr__(self):
+        """Return a string representation of treap."""
         lines = []
         nodes = [(self, 0)]
         while nodes:
             node, indent = nodes.pop()
 
-            name = 'p=' + str(node.priority) + '-s=' + str(node.size) + '-v=' + str(node.val) \
+            name = 'p=' + str(node.priority * 100)[0:2] + '-s=' + str(node.size) + '-v=' + str(node.val) \
                 if node else '*'
 
-            lines.append('  ' * indent + name)
+            lines.append('   ' * indent + name)
             if node:
                 nodes.append((node.right, indent + 1))
                 nodes.append((node.left, indent + 1))
@@ -66,15 +57,52 @@ class Treap:
         return self.size
 
 
+def insert(root: Treap, index: int, val: int) -> Treap:
+    """
+    Insert element
+    """
+    left, right = split(root, index)
+    return merge(merge(left, Treap(val)), right)
+
+
+def erase(root: Treap, index: int) -> Treap:
+    """
+    Erase element
+    """
+    left, right = split(root, index)
+    _, right = split(right, 1)
+    return merge(left, right)
+
+
+def replace(root: Treap, index: int, val: int) -> Treap:
+    """
+    Replace element
+   """
+    root = erase(root, index)
+    print(root)
+    root = insert(root, index, val)
+    print(root)
+    return root
+
+
 def merge(left: Treap, right: Treap) -> Treap:
+    # print('merging')
     if not (left and right):
         return left or right
+
+    # print('left:', left.val, left.priority, left.size,
+    #   'right:', right.val, right.priority, right.size)
+
     if left.priority > right.priority:
-        left.size = left.size + right.size
+        left.size = left.size + right.size  # <<<------------------------ size
         left.right = merge(left.right, right)
+        # print('returning left:', left.val)
         return left
-    right.size = right.size + left.size
+
+    # left is smaller
+    right.size = right.size + left.size  # <<<--------------------------- size
     right.left = merge(left, right.left)
+    # print('returning right:', right.val)
     return right
 
 
@@ -82,48 +110,55 @@ def split(t: Treap, index: int) -> (Treap, Treap):
 
     if not t:
         return (None, None)
+
     if index <= 0:
         return (None, t)
+
     if index >= t.size:
         return (t, None)
 
     if t.left and t.left.size >= index:
         res, t.left = split(t.left, index)
-        t.size = t.size - res.size
+        t.size = t.size - res.size  # <<<-------------------------------- size
         return (res, t)
 
-    index -= t.left.size if t.left else 0
+    index -= t.left.size if t.left else 0  # <<<------------------------- size
+
     if index == 1:
         temp = t.right
         t.right = None
-        t.size = t.size - temp.size
+        t.size = t.size - temp.size  # <<<------------------------------- size
         return (t, temp)
 
     t.right, leftover = split(t.right, index - 1)
-    t.size = t.size - leftover.size
+    t.size = t.size - leftover.size  # <<<------------------------------- size
     return (t, leftover)
 
 
-def handle(t, key, start, end):
-    start -= 1
-    left, t = split(t, start)
-    t, right = split(t, end - start)
-    res = merge(left, right)
-
-    if key == 1:
-        res = merge(t, res)
-    else:
-        res = merge(res, t)
-    return res
-
-
 if __name__ == '__main__':
-    n, m = map(int, input().split())
-    a = list(map(int, input().split()))
-    t = Treap(a[0])
-    for i in a[1:]:
-        t = merge(t, Treap(i))
-    for _ in range(m):
-        t = handle(t, *map(int, input().split()))
-    print(abs(t[1] - t[n]))
+
+    n = 10
+    arr = [7, 8, 9, 3, 4, 5, 6, 0, 1, 2]
+
+    # First Node
+    t = Treap(arr[0])
+
+    for a in arr[1:]:
+        t = merge(t, Treap(a))
+    print(t)
+    # print(repr(t))
+
+    l, r = split(t, 3)
+    m, r = split(r, 4)
+
+    t = merge(merge(r, m), l)
+    print(t)
+    # print(repr(t))
+    print(" ".join([str(t[i]) for i in range(len(t))]))
+
+    t = replace(t, 5, 0)
+    print(t)
+
+    t = insert(t, 2, 8)
+    t = insert(t, 2, 7)
     print(t)
