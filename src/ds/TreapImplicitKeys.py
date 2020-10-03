@@ -55,6 +55,18 @@ class Treap:
         return self.size
 
 
+def cnt(root: Treap) -> int:
+    if root is None:
+        return 0
+    else:
+        return root.size
+
+
+def upd_cnt(root: Treap):
+    if (root):
+        root.size = 1 + cnt(root.left) + cnt(root.right)
+
+
 def insert(root: Treap, index: int, treap: Treap) -> Treap:
     """
     Insert element
@@ -100,7 +112,7 @@ def merge(left: Treap, right: Treap) -> Treap:
     return right
 
 
-def split(t: Treap, index) -> (Treap, Treap):
+def split(t: Treap, index: int) -> (Treap, Treap):
 
     if not t:
         return (None, None)
@@ -110,6 +122,20 @@ def split(t: Treap, index) -> (Treap, Treap):
 
     if index >= t.size:
         return (t, None)
+
+    '''
+    cur_key = add + cnt(t.left)
+    if cur_key < index:
+        t.right, right = split(t.right, index, add + 1 + cnt(t.left))
+        left = t
+        upd_cnt(t)
+        return (left, right)
+    else:
+        left, t.left = split(t.left, index, add)
+        right = t
+        upd_cnt(t)
+        return (left, right)
+    '''
 
     if t.left and t.left.size >= index:
         res, t.left = split(t.left, index)
@@ -138,6 +164,12 @@ if __name__ == '__main__':
 
     for a in arr[1:]:
         t = merge(t, Treap(a))
+    print(t)
+    # print(repr(t))
 
-    t = replace(t, 5, Treap(99))
+    l, r = split(t, 3)
+    print(l)
+    print(r)
+
+    res = merge(r, l)
     print(t)
