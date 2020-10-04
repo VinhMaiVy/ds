@@ -17,24 +17,28 @@ Output:
 
 
 """
-
+# import math
+# from random import Random
 from random import random
 
 
 class Treap:
 
     def __init__(self, val: int):
+        # global R
         self.val = val
+        # self.priority = R.random()
         self.priority = random()
         self.cnt = 1
-        self.minimum = val
+        # self.minimum = val
         self.right = None
         self.left = None
 
-    def _getitem(self, root, index):
-        if root.left and (index <= root.left.cnt):
-            return self._getitem(root.left, index)
-        index -= root.left.cnt if root.left else 0
+    def _getitem(self, root, index) -> int:
+        if root.left:
+            if index <= root.left.cnt:
+                return self._getitem(root.left, index)
+            index -= root.left.cnt
         if index == 1:
             return root.val
         return self._getitem(root.right, index - 1)
@@ -44,6 +48,20 @@ class Treap:
             return None
         else:
             return self._getitem(self, index + 1)
+
+    def _setitem(self, root, index, val: int):
+        if root.left:
+            if index <= root.left.cnt:
+                self._setitem(root.left, index, val)
+            index -= root.left.cnt
+        if index == 1:
+            root.val = val
+        elif index > 1:
+            self._setitem(root.right, index - 1, val)
+
+    def __setitem__(self, index, val: int):
+        if 0 <= index < self.cnt:
+            self._setitem(self, index + 1, val)
 
     def __str__(self):
         res = str(self.left) if self.left else ''
@@ -66,23 +84,61 @@ class Treap:
                 nodes.append((node.left, indent + 1))
         return "\n".join(lines)
 
-    '''
     def __len__(self):
         return self.cnt
-    '''
 
 
-def minimum(root: Treap) -> int:
-    if not root:
-        return float('inf')
+def maxDepth(root: Treap) -> int:
+    # Null node has 0 depth.
+    if root is None:
+        return 0
+
+    # Get the depth of the left and right subtree
+    # using recursion.
+    leftDepth = maxDepth(root.left)
+    rightDepth = maxDepth(root.right)
+
+    # Choose the larger one and add the root to it.
+    if leftDepth > rightDepth:
+        return leftDepth + 1
     else:
-        return root.minimum
+        return rightDepth + 1
 
 
-def upd_minimum(root: Treap):
-    if root:
-        root.minimum = min(root.val, min(minimum(root.left),
-                                         minimum(root.right)))
+def preorder(root: Treap) -> str:
+    res = str(root.val) + ' '
+    res += preorder(root.left) if root.left else ''
+    res += preorder(root.right) if root.right else ''
+    return res
+
+
+def inorder(root: Treap) -> str:
+    res = inorder(root.left) if root.left else ''
+    res += str(root.val) + ' '
+    res += inorder(root.right) if root.right else ''
+    return res
+
+
+def postorder(root: Treap) -> str:
+    res = postorder(root.left) if root.left else ''
+    res += postorder(root.right) if root.right else ''
+    res += str(root.val) + ' '
+    return res
+
+    """
+    def minimum(root: Treap) -> int:
+        if not root:
+            return float('inf')
+        else:
+            return root.minimum
+
+
+    def upd_minimum(root: Treap):
+        if root:
+            root.minimum = min(root.val, min(minimum(root.left),
+                                             minimum(root.right)))
+
+    """
 
 
 def merge(left: Treap, right: Treap) -> Treap:
@@ -91,11 +147,11 @@ def merge(left: Treap, right: Treap) -> Treap:
         return left or right
 
     if left.priority > right.priority:
-        left.cnt = left.cnt + right.cnt  # <<<----------------- cnt
+        left.cnt += right.cnt  # <<<-------------------------- cnt
         left.right = merge(left.right, right)
         res = left
     else:
-        right.cnt = right.cnt + left.cnt  # <<<---------------- cnt
+        right.cnt += left.cnt  # <<<-------------------------- cnt
         right.left = merge(left, right.left)
         res = right
 
@@ -134,10 +190,17 @@ def insert(root: Treap, index: int, val: int) -> Treap:
 
 
 def erase(root: Treap, index: int) -> Treap:
+    """
+    Erase element
+    """
     left, right = split(root, index)
-    _, right = split(right, 1)
-    root = merge(left, right)
-    return root
+    _t, right = split(right, 1)
+    del _t
+    return merge(left, right)
+
+
+def append(root: Treap, val: int) -> Treap:
+    return merge(root, Treap(val))
 
 
 def handle(t, key, start, end):
