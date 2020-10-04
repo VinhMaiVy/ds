@@ -3,19 +3,6 @@
 """
 Treap with Implicit Keys
 
-Input:
-8 4
-1 2 3 4 5 6 7 8
-1 2 4
-2 3 5
-1 4 7
-2 1 4
-
-Output:
-1
-2 3 6 5 7 8 4 1
-
-
 """
 # import math
 from random import Random
@@ -202,7 +189,7 @@ def append(root: Treap, val: int) -> Treap:
 
 if __name__ == '__main__':
 
-    R = Random(2)
+    R = Random(0)
     n = 10
     arr = R.sample(range(0, n), n)
 
@@ -217,7 +204,7 @@ if __name__ == '__main__':
     # t = merge(merge(r, m), l)
     # print(t)
 
-    print('prep--', preorder(t))
+    print('pre--', preorder(t))
     print('in----', inorder(t))
     print('post--', postorder(t))
     # print(repr(t))
@@ -226,7 +213,7 @@ if __name__ == '__main__':
     # print(t)
     # t = insert(t, 2, 8)
     # print(repr(t))
-    t[9] = 99
+    t[5] = 99
     print(t)
 
     # print(t, t[0], t[len(t) - 1])
