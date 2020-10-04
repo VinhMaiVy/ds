@@ -17,15 +17,17 @@ Output:
 
 
 """
-
-from random import random
+# import math
+from random import Random
+# from random import random
 
 
 class Treap:
 
     def __init__(self, val: int):
+        global R
         self.val = val
-        self.priority = random()
+        self.priority = R.random()
         self.cnt = 1
         self.minimum = val
         self.right = None
@@ -66,10 +68,46 @@ class Treap:
                 nodes.append((node.left, indent + 1))
         return "\n".join(lines)
 
-    '''
     def __len__(self):
         return self.cnt
-    '''
+
+
+def maxDepth(root: Treap) -> int:
+    # Null node has 0 depth.
+    if root is None:
+        return 0
+
+    # Get the depth of the left and right subtree
+    # using recursion.
+    leftDepth = maxDepth(root.left)
+    rightDepth = maxDepth(root.right)
+
+    # Choose the larger one and add the root to it.
+    if leftDepth > rightDepth:
+        return leftDepth + 1
+    else:
+        return rightDepth + 1
+
+
+def preorder(root: Treap) -> str:
+    res = str(root.val) + ' '
+    res += preorder(root.left) if root.left else ''
+    res += preorder(root.right) if root.right else ''
+    return res
+
+
+def inorder(root: Treap) -> str:
+    res = inorder(root.left) if root.left else ''
+    res += str(root.val) + ' '
+    res += inorder(root.right) if root.right else ''
+    return res
+
+
+def postorder(root: Treap) -> str:
+    res = postorder(root.left) if root.left else ''
+    res += postorder(root.right) if root.right else ''
+    res += str(root.val) + ' '
+    return res
 
 
 def minimum(root: Treap) -> int:
@@ -134,38 +172,54 @@ def insert(root: Treap, index: int, val: int) -> Treap:
 
 
 def erase(root: Treap, index: int) -> Treap:
+    """
+    Erase element
+    """
     left, right = split(root, index)
     _, right = split(right, 1)
-    root = merge(left, right)
+    return merge(left, right)
+
+
+def replace(root: Treap, index: int, val: int) -> Treap:
+    """
+    Replace element
+   """
+    root = erase(root, index)
+    root = insert(root, index, val)
     return root
 
 
-def handle(t, key, start, end):
-
-    # print('handling', t.val, key, start, end)
-    start -= 1
-    left, t = split(t, start)
-    t, right = split(t, end - start)
-    res = merge(left, right)
-
-    if key == 1:
-        res = merge(t, res)
-    else:
-        res = merge(res, t)
-
-    return res
+def append(root: Treap, val: int) -> Treap:
+    return merge(root, Treap(val))
 
 
 if __name__ == '__main__':
-    n, m = map(int, input().split())
-    a = list(map(int, input().split()))
+
+    R = Random(2)
+    n = 10
+    arr = R.sample(range(0, n), n)
 
     t = None
-    for i in a:
-        t = merge(t, Treap(i))
-
-    for _ in range(m):
-        t = handle(t, *map(int, input().split()))
-
-    print(abs(t[0] - t[n - 1]))
+    for a in arr:
+        t = merge(t, Treap(a))
     print(t)
+    print('Max depth=', maxDepth(t))
+
+    # l, r = split(t, len(t) // 3)
+    # m, r = split(r, len(t) * 2 // 3)
+    # t = merge(merge(r, m), l)
+    # print(t)
+
+    print('prep--', preorder(t))
+    print('in----', inorder(t))
+    print('post--', postorder(t))
+    # print(repr(t))
+    # print(" ".join([str(t[i]) for i in range(len(t))]))
+
+    # t = replace(t, 5, 2)
+    # print(t)
+    # t = insert(t, 2, 8)
+    # print(repr(t))
+
+    # print(t, t[0], t[len(t) - 1])
+    # print(repr(t))

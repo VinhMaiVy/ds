@@ -13,20 +13,20 @@ class Treap:
     def __init__(self, val: int):
         self.val = val
         self.priority = random()
-        self.size = 1
+        self.cnt = 1
         self.right = None
         self.left = None
 
     def _getitem(self, root, index):
-        if root.left and (index <= root.left.size):
+        if root.left and (index <= root.left.cnt):
             return self._getitem(root.left, index)
-        index -= root.left.size if root.left else 0
+        index -= root.left.cnt if root.left else 0
         if index == 1:
             return root.val
         return self._getitem(root.right, index - 1)
 
     def __getitem__(self, index):
-        if index < 0 and index > self.size:
+        if index < 0 and index > self.cnt:
             return None
         else:
             return self._getitem(self, index + 1)
@@ -43,7 +43,7 @@ class Treap:
         while nodes:
             node, indent = nodes.pop()
 
-            name = 'p=' + str(node.priority * 1000)[0:2] + '-s=' + str(node.size) + '-v=' + str(node.val) \
+            name = 'p=' + str(node.priority * 1000)[0:2] + '-s=' + str(node.cnt) + '-v=' + str(node.val) \
                 if node else '*'
 
             lines.append('   ' * indent + name)
@@ -53,7 +53,7 @@ class Treap:
         return "\n".join(lines)
 
     def __len__(self):
-        return self.size
+        return self.cnt
 
 
 def preorder(root: Treap) -> str:
@@ -110,48 +110,42 @@ def merge(left: Treap, right: Treap) -> Treap:
     if not (left and right):
         return left or right
 
-    # print('left:', left.val, left.priority, left.size,
-    #   'right:', right.val, right.priority, right.size)
+    # print('left:', left.val, left.priority, left.cnt,
+    #   'right:', right.val, right.priority, right.cnt)
     if left.priority > right.priority:
-        left.size = left.size + right.size  # <<<------------------------ size
+        left.cnt = left.cnt + right.cnt  # <<<---------------- cnt
         left.right = merge(left.right, right)
         # print('returning left:', left.val)
         return left
 
     # left is smaller
-    right.size = right.size + left.size  # <<<--------------------------- size
+    right.cnt = right.cnt + left.cnt  # <<<------------------- cnt
     right.left = merge(left, right.left)
     # print('returning right:', right.val)
     return right
 
 
-def split(t: Treap, index: int) -> (Treap, Treap):
+def split(root: Treap, index: int) -> (Treap, Treap):
 
-    if not t:
+    if not root:
         return (None, None)
 
-    if index <= 0:
-        return (None, t)
+    if root.left and root.left.cnt >= index:
+        res, root.left = split(root.left, index)
+        root.cnt = root.cnt - res.cnt  # <<<------------------ cnt
+        return (res, root)
 
-    if index >= t.size:
-        return (t, None)
-
-    if t.left and t.left.size >= index:
-        res, t.left = split(t.left, index)
-        t.size = t.size - res.size  # <<<-------------------------------- size
-        return (res, t)
-
-    index -= t.left.size if t.left else 0  # <<<------------------------- size
+    index -= root.left.cnt if root.left else 0  # <<<--------- cnt
 
     if index == 1:
-        temp = t.right
-        t.right = None
-        t.size = t.size - temp.size  # <<<------------------------------- size
-        return (t, temp)
+        temp = root.right
+        root.right = None
+        root.cnt -= temp.cnt if temp else 0  # <<<------------ cnt
+        return (root, temp)
 
-    t.right, leftover = split(t.right, index - 1)
-    t.size = t.size - leftover.size  # <<<------------------------------- size
-    return (t, leftover)
+    root.right, leftover = split(root.right, index - 1)
+    root.cnt = root.cnt - leftover.cnt  # <<<----------------- cnt
+    return (root, leftover)
 
 
 if __name__ == '__main__':
@@ -175,11 +169,11 @@ if __name__ == '__main__':
     print('post--', postorder(t))
     # print(repr(t))
 
-    print(" ".join([str(t[i]) for i in range(len(t))]))
+    print(" ".join([str(t[i]) for i in range(9)]))
 
-    t = replace(t, 5, 0)
+    t = replace(t, 5, 2)
     print(t)
 
     t = insert(t, 2, 8)
     # print(repr(t))
-    print(t)
+    print(t, t[0], t[9])

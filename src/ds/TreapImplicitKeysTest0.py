@@ -92,7 +92,7 @@ def split(t, index):
 
         temp = t.right
         t.right = None
-        t.size -= temp.size
+        t.size -= temp.size if temp else 0
         return t, temp
 
     # definitely to the right

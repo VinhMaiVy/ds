@@ -156,6 +156,8 @@ if __name__ == '__main__':
     myTree.preOrder(root)
     print()
 
+    print("Inorder traversal of the",
+          "constructed AVL tree is")
     myTree.inOrder(root)
     print()
 
