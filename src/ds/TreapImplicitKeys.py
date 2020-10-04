@@ -30,10 +30,10 @@ class Treap:
         return self._getitem(root.right, index - 1)
 
     def __getitem__(self, index):
-        if index < 0 and index > self.cnt:
-            return None
-        else:
+        if 0 <= index < self.cnt:
             return self._getitem(self, index + 1)
+        else:
+            return None
 
     def _setitem(self, root, index, val: int):
         if root.left:
@@ -213,7 +213,7 @@ if __name__ == '__main__':
     # print(t)
     # t = insert(t, 2, 8)
     # print(repr(t))
-    t[5] = 99
+    t = erase(t, 5)
     print(t)
 
     # print(t, t[0], t[len(t) - 1])
