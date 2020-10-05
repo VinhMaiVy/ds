@@ -25,9 +25,10 @@ class Treap:
             if index <= root.left.cnt:
                 return self._getitem(root.left, index)
             index -= root.left.cnt
-        if index == 1:
+        if index == 1:  # Found!
             return root.val
-        return self._getitem(root.right, index - 1)  # Must have right
+        # definitely to the right
+        return self._getitem(root.right, index - 1)
 
     def __getitem__(self, index):
         if 0 <= index < self.cnt:
@@ -35,19 +36,29 @@ class Treap:
         else:
             return None
 
-    def _setitem(self, root, index, val: int):
+    def _setitem1(self, root, index: int, val: int):
         if (root.left is not None):
             if index <= root.left.cnt:
-                self._setitem(root.left, index, val)
+                self._setitem1(root.left, index, val)
             index -= root.left.cnt
-        if index == 1:
+        if index == 1:  # Found!
             root.val = val
-        elif index > 1:
-            self._setitem(root.right, index - 1, val)
+        elif index > 1:  # definitely to the right
+            self._setitem1(root.right, index - 1, val)
+
+    def _setitem2(self, root, index: int, val: int, add=0):
+        cur_ind = root.left.cnt if (root.left is not None) else 0
+        cur_ind += add
+        if (index < cur_ind):
+            self._setitem2(root.left, index, val, add)
+        elif (index > cur_ind):
+            self._setitem2(root.right, index, val, cur_ind + 1)
+        else:
+            root.val = val
 
     def __setitem__(self, index, val: int):
         if 0 <= index < self.cnt:
-            self._setitem(self, index + 1, val)
+            self._setitem1(self, index + 1, val)
 
     def __str__(self):
         res = str(self.left) if (self.left is not None) else ''
@@ -60,10 +71,8 @@ class Treap:
         nodes = [(self, 0)]
         while nodes:
             node, indent = nodes.pop()
-
-            name = 'p=' + str(node.priority * 100)[0:2] + '-c=' + str(node.cnt) + '-v=' + str(node.val)\
+            name = 'p:' + str(node.priority * 100)[0:2] + '-c:' + str(node.cnt) + '-v:' + str(node.val) \
                 if (node is not None) else '*'
-
             lines.append('   ' * indent + name)
             if node is not None:
                 nodes.append((node.right, indent + 1))
@@ -120,7 +129,6 @@ def upd_minimum(root: Treap):
 
 
 def merge(left: Treap, right: Treap) -> Treap:
-
     if (left is None) or (right is None):
         return left or right
 
@@ -138,23 +146,63 @@ def merge(left: Treap, right: Treap) -> Treap:
 
 
 def split(root: Treap, index: int, add=0) -> (Treap, Treap):
-
-    if root is None:
+    if (root is None):
         return (None, None)
+
+    if (index <= 0):
+        return (None, root)
 
     cur_ind = root.left.cnt if (root.left is not None) else 0
     cur_ind += add
+
     if index < cur_ind:
         resleft, root.left = split(root.left, index, add)
-        resright = root
-        resright.cnt -= resleft.cnt if (resleft is not None) else 0  # <<<- cnt
-    else:
+        root.cnt -= resleft.cnt if (resleft is not None) else 0
+        return resleft, root
+    elif index > cur_ind:
         root.right, resright = split(root.right, index, cur_ind + 1)
-        resleft = root
-        resleft.cnt -= resright.cnt if (resright is not None) else 0  # <- cnt
+        root.cnt -= resright.cnt if (resright is not None) else 0
+        return root, resright
+    else:
+        resleft = root.left
+        root.left = None
+        root.cnt -= resleft.cnt if (resleft is not None) else 0
 
-    # upd_minimum(root)
-    return resleft, resright
+        # upd_minimum(resleft)
+        # upd_minimum(root)
+        return resleft, root
+
+
+def split2(root: Treap, index: int) -> (Treap, Treap):
+    if (root is None):
+        return (None, None)
+
+    if (index <= 0):
+        return (None, root)
+    elif (index >= root.cnt):
+        return (root, None)
+
+    if (root.left is not None) and (index <= root.left.cnt):
+        resleft, root.left = split2(root.left, index)  # <------
+        root.cnt -= resleft.cnt
+        return (resleft, root)
+
+    # if root.left is None or index > root.left.cnt
+    #    then reduce index by cnt on the left
+    index -= root.left.cnt if (root.left is not None) else 0
+
+    if (index == 1):  # Found
+        resright = root.right
+        root.right = None
+        root.cnt -= resright.cnt if (resright is not None) else 0
+        return (root, resright)
+
+    # definitely to the right
+    root.right, leftover = split2(root.right, index - 1)  # <---
+    # leftover exists because we already checked if they wanted
+    # everything at the top
+    root.cnt -= leftover.cnt
+    return (root, leftover)
 
 
 def insertAt(root: Treap, index: int, val: int) -> Treap:
@@ -200,33 +248,36 @@ def tpopleft(root: Treap) -> (Treap, int):
 
 
 if __name__ == '__main__':
+    R = Random(0)
+    n = 50
 
-    R = Random()
-    n = 10
     arr = R.sample(range(0, n), n)
+    # arr = [4, 5, 2, 3, 0, 1]
+    # arr = [0, 1, 2, 3, 4, 5]
 
     t = None
     for a in arr:
         t = merge(t, Treap(a))
     print('Max depth=', maxDepth(t))
     print(t)
-    l, r = split(t, len(t) // 3 - 1)
-    m, r = split(r, (len(t) * 2) // 3 - 1)
-    print(l, '-', m, '-', r)
-    t = merge(merge(r, m), l)
-    print(t)
-    print('pre--', preorder(t))
-    print('in----', inorder(t))
-    print('post--', postorder(t))
+    # l, r = split(t, n // 3)
+    # m, r = split(r, len(r) // 2)
+    # print(l, '-', m, '-', r)
+    # t = merge(merge(r, m), l)
+    # print(t)
+    # print('pre--', preorder(t))
+    # print('in----', inorder(t))
+    # print('post--', postorder(t))
     # print(repr(t))
-    print(" ".join([str(t[i]) for i in range(len(t))]))
+    # print(" ".join([str(t[i]) for i in range(len(t))]))
 
     # print(t)
     # t = insert(t, 2, 8)
-    # print(repr(t))
-    l, r = split(t, 0)
-    print(l)
-    print(r)
-
+    # print(t)
+    t, v = tpopleft(t)
+    print(t)
+    print(v)
+    # r._setitem2(r, len(r) // 2, 99)
+    # print(r)
     # print(t, t[0], t[len(t) - 1])
     # print(repr(t))
