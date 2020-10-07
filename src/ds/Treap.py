@@ -245,7 +245,7 @@ class Treap:
         node, parent = self._find_node(key, self.root)
         if (node is None):
             # print('Wrong!')
-            print('Key not found. Can not delete key\n')
+            raise KeyError(key)
         elif node.cnt > 1:
             node.cnt -= 1
             node.size -= 1
