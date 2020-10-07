@@ -3,7 +3,6 @@
 """
 Binary Heap Tree
     heapq
-
 """
 import math
 
@@ -12,11 +11,11 @@ class BinaryHeapTree(object):
 
     def __init__(self, max_nodes=1000000):
         self._max_nodes = max_nodes
-        self.heap = [0]*(self._max_nodes+1)
+        self.heap = [0] * (self._max_nodes + 1)
         self._n = 0
 
     def __str__(self):
-        return str(self.heap[1:self._n+1])
+        return str(self.heap[1:self._n + 1])
 
     def isRoot(self, i):
         return i == 1
@@ -45,7 +44,8 @@ class BinaryHeapTree(object):
         else:
             _parent = self.parent(i)
             if self.heap[i] > self.heap[_parent]:
-                self.heap[i], self.heap[_parent] = self.heap[_parent], self.heap[i] 
+                self.heap[i], self.heap[_parent] = \
+                    self.heap[_parent], self.heap[i]
 
             self.bubbleUp(self.parent(i))
 
@@ -59,11 +59,13 @@ class BinaryHeapTree(object):
         else:  # two children
             _left = self.left(i)
             _right = self.right(i)
-            if self.heap[_left] > self.heap[_right] and self.heap[i] < self.heap[_left]:
+            if self.heap[_left] > self.heap[_right] and \
+                    self.heap[i] < self.heap[_left]:
                 self.heap[i], self.heap[_left] = self.heap[_left], self.heap[i]
                 self.bubbleDown(_left)
             elif self.heap[i] < self.heap[_right]:
-                self.heap[i], self.heap[_right] = self.heap[_right], self.heap[i]
+                self.heap[i], self.heap[_right] = \
+                    self.heap[_right], self.heap[i]
                 self.bubbleDown(_right)
 
     def insert(self, p):
@@ -101,5 +103,5 @@ class BinaryHeapTree(object):
     def heapify(self, arr):
         self._n = len(arr)
         self.heap[1:] = arr
-        for i in range(self._n//2, 0, -1):
+        for i in range(self._n // 2, 0, -1):
             self.bubbleDown(i)

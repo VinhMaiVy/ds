@@ -232,8 +232,5 @@ if __name__ == '__main__':
     treap[7] = 2
     treap[8] = 1
     treap[9] = 9
-    # del treap[4]
-    print(repr(treap))
     print(str(treap))
-    print(treap.min())
-    print(treap.max())
+    print(treap[5])

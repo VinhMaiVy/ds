@@ -15,13 +15,15 @@ from ds.BinaryHeapTree import BinaryHeapTree
 
 if __name__ == '__main__':
 
-    t = int(input())
+    # t = int(input())
+    t = 10
 
     heap = BinaryHeapTree(t)
 
-    arr = list(map(int, input().split()))
+    # arr = list(map(int, input().split()))
+    arr = [5, 3, 2, 1, 6, 7, 8, 9, 10, 4]
 
-    heap.heapify(arr)
+    for a in arr:
+        heap.insert(a)
 
-    while not heap.heapEmpty():
-        print(heap.pop())
+    print(heap)

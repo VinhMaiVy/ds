@@ -142,7 +142,7 @@ if __name__ == "__main__":
     # a = [0, 8, 7, 6, 2]
 
     root = None
-    for i in range(100, 0, -1):
+    for i in range(0, 10):
         # root = merge(root, Node(i))
         root = insert(root, i)
 
