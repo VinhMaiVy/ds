@@ -6,17 +6,19 @@ Treap
 """
 
 import math
-from random import Random
-# from random import random
+
+# from random import Random
+from random import random
 # from random import randint
 
 
 class TreapNode:
 
     def __init__(self, key, parent=None, left=None, right=None):
-        global R
+        # global P
         self.key = key
-        self.priority = R.random()
+        # self.priority = P.pop(0)
+        self.priority = random()
         self.cnt = 1
         self.size = 1
         self.parent = parent
@@ -27,7 +29,7 @@ class TreapNode:
         return str((self.key, self.size))
 
     def __str__(self):
-        return str((self.key, int(self.priority * 100), self.size))
+        return str((self.key, int(self.priority), self.size))
         # return str(self.size)
 
     def size(self, node):
@@ -80,19 +82,25 @@ class Treap:
     def __len__(self):
         return self.root.size
 
+    '''
+     ****     Get items from Treap   ****
+    '''
+
     def _getitem(self, root, index) -> int:
         if (root.left is not None):
             if index <= root.left.size:
                 return self._getitem(root.left, index)
+
             index -= root.left.size
 
         # root.cnt
-        if (root.cnt == 1 and index == 1) or \
-                (index in [1 + _ for _ in range(root.cnt)]):
+        if index in range(1, root.cnt + 1):
             return root.key
 
+        index -= root.cnt
+
         # definitely to the right
-        return self._getitem(root.right, index - 1)
+        return self._getitem(root.right, index)
 
     def __getitem__(self, index):
         if 0 <= index < self.root.size:
@@ -236,7 +244,8 @@ class Treap:
         # Search Key first
         node, parent = self._find_node(key, self.root)
         if (node is None):
-            print('Wrong!')
+            # print('Wrong!')
+            print('Key not found. Can not delete key\n')
         elif node.cnt > 1:
             node.cnt -= 1
             node.size -= 1
@@ -289,25 +298,34 @@ class Treap:
         n = self.root.size
         if (n % 2) == 0:
             return (self._getitem(self.root, n // 2 + 1) +
-                    self._getitem(self.root, n // 2 - 1)) / 2
+                    self._getitem(self.root, n // 2)) / 2
         else:
-            return self._getitem(self.root(math.floor(n / 2)))
+            return self._getitem(self.root, math.floor(n / 2) + 1)
 
     def clear(self):
         self.root = None
 
 
 if __name__ == '__main__':
-    R = Random()
+    # P = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
     treap = Treap()
 
-    n = 10
-    # arr = [15, 8, 30, 4, 30, 14, 30, 30, 9, 9]
-    for m in range(n):
-        m = R.randint(0, 2 ** 6)
-        treap.insert(m)
-
-    print(treap)
-    print(repr(treap))
-    print(len(treap))
+    treap.insert(1)
+    treap.insert(2)
     print(treap.median())
+    treap.insert(2)
+
+    treap.insert(1)
+    treap.insert(1)
+    treap.insert(1)
+    treap.insert(3)
+    treap.insert(3)
+    treap.insert(2)
+
+    print([treap[_] for _ in range(len(treap))])
+
+    treap.delete(1)
+    print([treap[_] for _ in range(len(treap))])
+
+    treap.insert(3)
+    print([treap[_] for _ in range(len(treap))])
