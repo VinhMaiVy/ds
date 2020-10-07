@@ -5,16 +5,17 @@ Treap with Implicit Keys
 
 """
 # import math
-from random import Random
-# from random import random
+# from random import Random
+from random import random
 
 
 class Treap:
 
     def __init__(self, val: int):
-        global R
+        # global R
         self.val = val
-        self.priority = R.random()
+        # self.priority = R.random()
+        self.priority = random()
         self.cnt = 1
         self.minimum = val
         self.right = None
@@ -248,11 +249,11 @@ def tpopleft(root: Treap) -> (Treap, int):
 
 
 if __name__ == '__main__':
-    R = Random(0)
+    # R = Random(0)
     n = 50
 
-    arr = R.sample(range(0, n), n)
-    # arr = [4, 5, 2, 3, 0, 1]
+    # arr = R.sample(range(0, n), n)
+    arr = [4, 5, 2, 3, 0, 1]
     # arr = [0, 1, 2, 3, 4, 5]
 
     t = None

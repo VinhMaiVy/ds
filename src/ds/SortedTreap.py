@@ -26,10 +26,10 @@ class TreapNode:
         self.right = right
 
     def __repr__(self):
-        return str((self.key, self.size))
+        return str((self.key, self.priority, self.size))
 
     def __str__(self):
-        return str((self.key, int(self.priority), self.size))
+        return str((self.key))
         # return str(self.size)
 
     def size(self, node):
@@ -90,15 +90,11 @@ class Treap:
         if (root.left is not None):
             if index <= root.left.size:
                 return self._getitem(root.left, index)
-
             index -= root.left.size
-
         # root.cnt
         if index in range(1, root.cnt + 1):
             return root.key
-
         index -= root.cnt
-
         # definitely to the right
         return self._getitem(root.right, index)
 
@@ -143,15 +139,10 @@ class Treap:
             if parent.left:
                 parent.left.parent = parent
 
-            if (parent.right is not None):
-                node.size += (parent.right.size + parent.cnt)
-            else:
-                node.size += parent.cnt
-
-            if (node.left is not None):
-                parent.size -= (node.left.size + node.cnt)
-            else:
-                parent.size -= node.cnt
+            node.size += (parent.right.size + parent.cnt) \
+                if parent.right else parent.cnt
+            parent.size -= (node.left.size + node.cnt) \
+                if node.left else node.cnt
 
         else:
 
@@ -183,15 +174,11 @@ class Treap:
             if parent.right:
                 parent.right.parent = parent
 
-            if (parent.left is not None):
-                node.size += parent.left.size + parent.cnt
-            else:
-                node.size += parent.cnt
+            node.size += parent.left.size + parent.cnt \
+                if parent.left else parent.cnt
 
-            if (node.right is not None):
-                parent.size -= (node.right.size + node.cnt)
-            else:
-                parent.size -= node.cnt
+            parent.size -= (node.right.size + node.cnt) \
+                if node.right else node.cnt
 
         grandparent = parent.parent
         node.parent, parent.parent = grandparent, node
@@ -314,13 +301,15 @@ if __name__ == '__main__':
     treap.insert(2)
     print(treap.median())
     treap.insert(2)
-
+    treap.insert(1)
+    print(treap.median())
     treap.insert(1)
     treap.insert(1)
-    treap.insert(1)
+    print(treap.median())
     treap.insert(3)
     treap.insert(3)
     treap.insert(2)
+    print(treap.median())
 
     print([treap[_] for _ in range(len(treap))])
 
