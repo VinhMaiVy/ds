@@ -118,9 +118,9 @@ def postorder(root: Treap) -> str:
 
 def minimum(root: Treap) -> int:
     if (root is not None):
-        return float('inf')
-    else:
         return root.minimum
+    else:
+        return float('inf')
 
 
 def upd_minimum(root: Treap):
@@ -159,16 +159,20 @@ def split(root: Treap, index: int, add=0) -> (Treap, Treap):
     if index < cur_ind:
         resleft, root.left = split(root.left, index, add)
         root.cnt -= resleft.cnt if (resleft is not None) else 0
+        # upd_minimum(resleft)
+        # upd_minimum(root)
         return resleft, root
     elif index > cur_ind:
         root.right, resright = split(root.right, index, cur_ind + 1)
         root.cnt -= resright.cnt if (resright is not None) else 0
+        # upd_minimum(root)
+        # upd_minimum(resright)
         return root, resright
+
     else:
         resleft = root.left
         root.left = None
         root.cnt -= resleft.cnt if (resleft is not None) else 0
-
         # upd_minimum(resleft)
         # upd_minimum(root)
         return resleft, root
@@ -250,17 +254,19 @@ def tpopleft(root: Treap) -> (Treap, int):
 
 if __name__ == '__main__':
     # R = Random(0)
-    n = 50
+    # n = 50
 
     # arr = R.sample(range(0, n), n)
-    arr = [4, 5, 2, 3, 0, 1]
-    # arr = [0, 1, 2, 3, 4, 5]
+    # arr = [4, 5, 2, 3, 0, 1]
+    arr = [1, 2, 3, 4, 5, 6, 7]
 
     t = None
     for a in arr:
         t = merge(t, Treap(a))
-    print('Max depth=', maxDepth(t))
-    print(t)
+    # print('Max depth=', maxDepth(t))
+    print(preorder(t))
+    print(inorder(t))
+    print(postorder(t))
     # l, r = split(t, n // 3)
     # m, r = split(r, len(r) // 2)
     # print(l, '-', m, '-', r)
@@ -275,9 +281,9 @@ if __name__ == '__main__':
     # print(t)
     # t = insert(t, 2, 8)
     # print(t)
-    t, v = tpopleft(t)
-    print(t)
-    print(v)
+    # t, v = tpopleft(t)
+    # print(t)
+    # print(v)
     # r._setitem2(r, len(r) // 2, 99)
     # print(r)
     # print(t, t[0], t[len(t) - 1])
